@@ -1,0 +1,73 @@
+import random
+def print_board(board):
+    print("-------------")
+    for i in range(3):
+        row = "|"
+        for j in range(3):
+            cell_num = str(i * 3 + j + 1)
+            if board[i][j] == ' ':
+                row += " " + cell_num + " |"
+            else:
+                row += " " + board[i][j] + " |"
+        print(row)
+        print("-------------")
+def check_winner(board, player):
+    for row in board:
+        if all(cell == player for cell in row):
+            return True
+    for col in range(3):
+        if all(board[row][col] == player for row in range(3)):
+            return True
+    if all(board[i][i] == player for i in range(3)) or all(board[i][2 - i] == player for i in range(3)):
+        return True
+    return False
+def available_moves(board):
+    return [(row, col) for row in range(3) for col in range(3) if board[row][col] == ' ']
+def computer_move(board):
+    moves = available_moves(board)
+    return random.choice(moves)
+def player_move(board):
+    while True:
+        try:
+            move = int(input("Enter your move (1-9): ")) - 1
+            if 0 <= move <= 8:
+                row, col = move // 3, move % 3
+                if board[row][col] == ' ':
+                    return row, col
+                else:
+                    print("That cell is already taken. Try again.")
+            else:
+                print("Invalid move. Please enter a number from 1 to 9.")
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+
+def main():
+    board = [[' ' for _ in range(3)] for _ in range(3)]
+    players = ['X', 'O']
+    turn = 0
+
+    print("Welcome to Tic Tac Toe!")
+    print_board(board)
+
+    while True:
+        player = players[turn % 2]
+
+        if player == 'X':
+            row, col = player_move(board)
+        else:
+            row, col = computer_move(board)
+
+        board[row][col] = player
+        print_board(board)
+
+        if check_winner(board, player):
+            print(f"Player {player} wins!")
+            break
+        elif all(all(cell != ' ' for cell in row) for row in board):
+            print("It's a tie!")
+            break
+
+        turn += 1
+
+if __name__ == "__main__":
+    main()
